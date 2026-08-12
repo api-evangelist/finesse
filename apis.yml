@@ -1,23 +1,156 @@
 aid: finesse
 name: FINESSE
-description: 'FINESSE is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  FINESSE is a Los Angeles direct-to-consumer womenswear brand, founded in 2018, that positions
+  itself as an AI-driven fashion house: proprietary demand-prediction models combined with weekly
+  community votes decide which styles get produced and in what quantity, which the company frames as
+  an answer to overproduction and fashion waste. It sells dresses, tops, bottoms, jumpsuits,
+  outerwear, footwear and accessories in sizes XS-3X. FINESSE publishes no developer API program,
+  but its storefront at finesse.us ships a genuine agent surface: a live Universal Commerce Protocol
+  merchant profile at /.well-known/ucp, an unauthenticated MCP endpoint at /api/ucp/mcp exposing 13
+  catalog, cart, checkout and order tools with full JSON Schema inputs, an /agents.md instruction
+  document advertised through a dedicated agentic-discovery sitemap, a mirroring /llms.txt, and
+  OAuth 2.0 / OpenID Connect metadata for shopper accounts on account.finesse.us.
+image: https://finesse.us/cdn/shop/files/opt-1.jpg?v=1745528244
 url: https://raw.githubusercontent.com/api-evangelist/finesse/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment
 specificationVersion: '0.20'
 created: '2026-08-12'
 modified: '2026-08-12'
 tags:
 - Company
-apis: []
+- retail
+- ecommerce
+- fashion
+- apparel
+- direct-to-consumer
+- agentic-commerce
+- ucp
+- mcp
+- agent-native
+- shopify
+- consumer
+apis:
+- name: FINESSE UCP Commerce MCP API
+  description: >-
+    Agent-facing commerce endpoint implementing the Universal Commerce Protocol (version 2026-04-08,
+    with 2026-01-23 also supported) over MCP/JSON-RPC 2.0. Thirteen tools cover catalog search and
+    lookup, product detail, cart create/read/update/cancel, checkout create/read/update/complete/
+    cancel, and order retrieval. tools/list is anonymous; tool calls require a self-asserted
+    meta.ucp-agent.profile URI, and payment completion requires contemporaneous human buyer
+    approval. Money is expressed in ISO 4217 minor units.
+  humanURL: https://finesse.us/agents.md
+  baseURL: https://finesse.us/api/ucp/mcp
+  tags:
+  - agentic-commerce
+  - ucp
+  - mcp
+  - ecommerce
+  - retail
+  - fashion
+  - agent-native
+  properties:
+  - type: MCPServer
+    url: mcp/finesse-mcp.yml
+  - type: MCPServer
+    url: https://finesse.us/api/ucp/mcp
+  - type: Documentation
+    url: https://finesse.us/agents.md
+  - type: Authentication
+    url: authentication/finesse-authentication.yml
+  - type: Conventions
+    url: conventions/finesse-conventions.yml
+  - type: ErrorCatalog
+    url: errors/finesse-problem-types.yml
+  - type: DataModel
+    url: data-model/finesse-data-model.yml
+  - type: RateLimits
+    url: rate-limits/finesse-rate-limits.yml
+- name: FINESSE Storefront JSON (read-only)
+  description: >-
+    Unauthenticated read-only product endpoints that FINESSE documents for agents in its own
+    agents.md: a paged product feed at /products.json, per-product and per-collection JSON, product
+    search, and a sitemap index. Prices here are decimal strings, unlike the minor-unit integers the
+    MCP surface returns. Unversioned, with no published stability guarantee. The baseURL is the site
+    root by design and not a marketing placeholder: these endpoints genuinely live at
+    https://finesse.us/products.json and https://finesse.us/collections/{handle}/products.json, both
+    verified HTTP 200 on 2026-08-12.
+  humanURL: https://finesse.us/agents.md
+  baseURL: https://finesse.us/
+  tags:
+  - ecommerce
+  - retail
+  - fashion
+  - catalog
+  - agent-native
+  properties:
+  - type: Documentation
+    url: https://finesse.us/agents.md
+  - type: DataModel
+    url: data-model/finesse-data-model.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/finesse-domain-security.yml
 - type: Website
-  url: https://forgeglobal.com/finesse_stock/
+  url: https://finesse.us/
+- type: Documentation
+  url: https://finesse.us/agents.md
+- type: APIReference
+  url: https://finesse.us/agents.md
+- type: GettingStarted
+  url: https://finesse.us/agents.md
+- type: Support
+  url: https://finesse.us/pages/contact
+- type: HelpCenter
+  url: https://finesse.us/pages/faq
+- type: Blog
+  url: https://finesse.us/blogs/news
+- type: SignUp
+  url: https://finesse.us/account/register
+- type: Login
+  url: https://finesse.us/account/login
+- type: TermsOfService
+  url: https://finesse.us/policies/terms-of-service
+- type: PrivacyPolicy
+  url: https://finesse.us/policies/privacy-policy
+- type: MCPServer
+  url: mcp/finesse-mcp.yml
+- type: LLMsTxt
+  url: llms/finesse-llms.txt
+- type: WellKnown
+  url: well-known/finesse-well-known.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Authentication
+  url: authentication/finesse-authentication.yml
+- type: OAuthScopes
+  url: scopes/finesse-scopes.yml
+- type: OpenIDConnect
+  url: well-known/finesse-openid-configuration.json
+- type: Conventions
+  url: conventions/finesse-conventions.yml
+- type: ErrorCatalog
+  url: errors/finesse-problem-types.yml
+- type: DataModel
+  url: data-model/finesse-data-model.yml
+- type: Lifecycle
+  url: lifecycle/finesse-lifecycle.yml
+- type: Conformance
+  url: conformance/finesse-conformance.yml
+- type: RateLimits
+  url: rate-limits/finesse-rate-limits.yml
+- type: Plans
+  url: plans/finesse-plans-pricing.yml
+x-enrichment:
+  date: '2026-08-12'
+  status: enriched
+  artifacts_added: 22
+  pass: local-v1

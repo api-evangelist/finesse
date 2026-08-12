@@ -1,0 +1,93 @@
+generated: '2026-08-12'
+method: probed
+source: live probes of /.well-known/ on FINESSE hosts (2026-08-12)
+note: >-
+  FINESSE runs its storefront on Shopify (shop id 23733469261, myshopify handle finesse-us).
+  Every document indexed below is served from a FINESSE-controlled host (finesse.us,
+  account.finesse.us) and describes the FINESSE store specifically — the UCP merchant profile
+  names merchant_name "FINESSE" and merchant_origin "finesse.us"; the OAuth/OIDC metadata points
+  at account.finesse.us endpoints. The issuer string is a Shopify-hosted identity provider
+  (https://shopify.com/authentication/23733469261) scoped to this one merchant, which is the
+  platform-templated case, not a different company's document.
+hosts:
+  - host: https://finesse.us
+    documents:
+      - path: /.well-known/ucp
+        status: 200
+        content_type: application/json
+        file: finesse-ucp.json
+        note: Universal Commerce Protocol merchant profile (version 2026-04-08).
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: application/json
+        file: finesse-openid-configuration.json
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        content_type: application/json
+        file: finesse-oauth-authorization-server.json
+        note: RFC 8414. Byte-identical to the openid-configuration document.
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        content_type: application/json
+        file: finesse-oauth-protected-resource.json
+        note: RFC 9728. resource=https://finesse.us, authorization_servers=[account.finesse.us, shopify.com/authentication/23733469261].
+      - path: /.well-known/apple-developer-merchantid-domain-association
+        status: 200
+        content_type: text/plain
+        file: null
+        note: Apple Pay domain-association token; not saved (opaque merchant verification blob, no descriptive value).
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/mcp.json
+        status: 404
+      - path: /.well-known/change-password
+        status: 404
+      - path: /.well-known/dnt-policy.txt
+        status: 404
+  - host: https://account.finesse.us
+    documents:
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: application/json
+        file: null
+        note: >-
+          Equivalent to the finesse.us document except jwks_uri, which resolves to
+          https://account.finesse.us/.well-known/jwks.json rather than the /authentication/ path.
+          Not saved separately to avoid a near-duplicate.
+      - path: /authentication/.well-known/jwks.json
+        status: 200
+        content_type: application/json
+        file: null
+        note: RS256 signing keys. Rotating key material — deliberately not snapshotted.
+non_well_known_agent_documents:
+  - path: /llms.txt
+    status: 200
+    content_type: text/markdown
+    file: ../llms/finesse-llms.txt
+  - path: /agents.md
+    status: 200
+    content_type: text/markdown
+    file: ../skills/finesse-agents.md
+    note: The store's canonical agent-facing document; /llms.txt mirrors it.
+  - path: /sitemap_agentic_discovery.xml
+    status: 200
+    content_type: application/xml
+    file: null
+    note: A dedicated agentic-discovery sitemap whose single entry is https://finesse.us/agents.md.
+  - path: /robots.txt
+    status: 200
+    content_type: text/plain
+    file: null
+security_txt:
+  served: false
+  status: 404
+  note: >-
+    No security.txt on any FINESSE host, so no SecurityTxt pointer is emitted.

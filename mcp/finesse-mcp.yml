@@ -1,0 +1,77 @@
+generated: '2026-08-12'
+method: probed
+status: published
+source: https://finesse.us/api/ucp/mcp
+discovery:
+  - https://finesse.us/agents.md
+  - https://finesse.us/llms.txt
+  - https://finesse.us/.well-known/ucp
+ownership_note: >-
+  The MCP endpoint is served from FINESSE's own apex domain (finesse.us) and the UCP merchant
+  profile at /.well-known/ucp names merchant_name "FINESSE", merchant_origin "finesse.us" and
+  shop_id 23733469261. The implementation is Shopify's native UCP/MCP surface — the canonical
+  service endpoint in the merchant profile is the myshopify mirror
+  https://finesse-us.myshopify.com/api/ucp/mcp — which is the platform-templated case: one
+  merchant's store, addressed on that merchant's domain.
+server:
+  name: FINESSE UCP Commerce MCP
+  transport: http
+  url: https://finesse.us/api/ucp/mcp
+  alternate_url: https://finesse-us.myshopify.com/api/ucp/mcp
+  protocol: MCP over JSON-RPC 2.0 (HTTP POST)
+  api_version_header: x-shopify-ucp-mcp-api-version
+  api_version_observed: '2026-04-08'
+  platform: Shopify
+  ucp:
+    profile: https://finesse.us/.well-known/ucp
+    version: '2026-04-08'
+    supported_versions: ['2026-04-08', '2026-01-23']
+    specification: https://ucp.dev
+    schema: https://ucp.dev/2026-04-08/services/shopping/mcp.openrpc.json
+auth:
+  tools_list: anonymous
+  note: >-
+    tools/list requires no credentials and returned HTTP 200 with full inputSchema for every tool
+    on 2026-08-12. Tool CALLS require a `meta.ucp-agent.profile` agent-profile URI; a call without
+    one is rejected with JSON-RPC error -32001 / invalid_profile_url. Payment completion additionally
+    requires contemporaneous buyer approval (see conventions/finesse-conventions.yml). A separate,
+    login-gated Shopify Customer Account MCP API is advertised via the
+    `customer-account-mcp-api:full` OAuth scope (see scopes/finesse-scopes.yml).
+tool_count: 13
+tools:
+  - {name: search_catalog, category: catalog, description: "Search for products from the online store, hosted on Shopify."}
+  - {name: lookup_catalog, category: catalog, description: "Look up multiple products or variants by identifier."}
+  - {name: get_product, category: catalog, description: "Retrieve complete product detail by identifier. Returns a singular product."}
+  - {name: create_cart, category: cart, description: "Creates a new cart."}
+  - {name: get_cart, category: cart, description: "Get the cart contents."}
+  - {name: update_cart, category: cart, description: "Perform updates to a cart."}
+  - {name: cancel_cart, category: cart, description: "Cancels a cart."}
+  - {name: create_checkout, category: checkout, description: "Creates a checkout. Returns checkout details, including line items, totals, and any applicable discounts or taxes."}
+  - {name: get_checkout, category: checkout, description: "Returns details about the checkout, including line items, totals, and any applicable discounts or taxes."}
+  - {name: update_checkout, category: checkout, description: "Updates a checkout."}
+  - {name: complete_checkout, category: checkout, description: "Completes a checkout and returns the checkout result, including order ID, Thank You Page URL, or any errors encountered."}
+  - {name: cancel_checkout, category: checkout, description: "Cancels a checkout."}
+  - {name: get_order, category: order, description: "Get the details of an order."}
+raw_manifest: mcp/finesse-mcp-tools-list.json
+capabilities_declared:
+  - dev.ucp.shopping.catalog.search
+  - dev.ucp.shopping.catalog.lookup
+  - dev.ucp.shopping.cart
+  - dev.ucp.shopping.checkout
+  - dev.ucp.shopping.fulfillment
+  - dev.ucp.shopping.discount
+  - dev.ucp.shopping.order
+  - dev.shopify.catalog
+payment_handlers:
+  - {id: gpay, namespace: com.google.pay, version: '2026-01-11'}
+  - {id: shopify.card, namespace: dev.shopify.card, version: '2026-01-15'}
+  - {id: shop_pay, namespace: dev.shopify.shop_pay, version: '2026-04-08'}
+related_agent_surface:
+  shop_skill: https://shop.app/SKILL.md
+  note: >-
+    FINESSE's own agents.md recommends the cross-store Shop skill for buy-for-me agents. That skill
+    is published by Shopify, not FINESSE, and is recorded here as context only.
+notes: >-
+  Tool names, categories and descriptions are transcribed verbatim from a live, unauthenticated
+  tools/list response; the full response including every inputSchema is stored alongside this
+  manifest. No tool was invented and no tool was invoked.

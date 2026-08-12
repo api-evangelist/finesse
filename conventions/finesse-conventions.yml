@@ -1,0 +1,115 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  mcp/finesse-mcp-tools-list.json (live tools/list 2026-08-12), https://finesse.us/agents.md,
+  https://finesse.us/.well-known/ucp, observed response headers on
+  https://finesse.us/api/ucp/mcp and https://finesse.us/products.json
+scope: >-
+  Cross-cutting runtime semantics for FINESSE's two machine surfaces: the UCP/MCP commerce endpoint
+  and the unauthenticated storefront JSON endpoints. FINESSE publishes no REST developer API and no
+  OpenAPI, so everything below is read from the live manifest, the store's own agents.md, and
+  observed responses.
+transport:
+  mcp:
+    protocol: JSON-RPC 2.0 over HTTP POST
+    endpoint: https://finesse.us/api/ucp/mcp
+    content_type: application/json
+    accept: 'application/json, text/event-stream'
+  storefront_json:
+    protocol: HTTP GET, JSON responses
+    endpoints: ['/products.json', '/products/{handle}.json', '/collections/{handle}/products.json']
+authentication:
+  style: >-
+    Anonymous discovery; agent-profile assertion (meta.ucp-agent.profile) on every tool call;
+    separate OIDC login for shopper accounts. See authentication/finesse-authentication.yml.
+idempotency:
+  supported: false
+  detail: >-
+    No idempotency key, no request-replay header and no retry-safety statement anywhere on the
+    published surface. complete_checkout must be treated as non-idempotent: re-read with
+    get_checkout before any retry. This is a real gap on a payment-completing surface.
+pagination:
+  mcp:
+    style: not published
+    detail: >-
+      search_catalog and lookup_catalog expose no cursor or page parameter in the live inputSchema;
+      result-set bounds are not documented.
+  storefront_json:
+    style: page-number
+    params: [page, limit]
+    observed_default: 30 products per response on /products.json
+money:
+  mcp:
+    representation: integer minor units + ISO 4217 currency code
+    example: '{"amount": 2500, "currency": "USD"} is $25.00'
+    rule: >-
+      Divide by 100 for two-decimal currencies before quoting a human; zero-decimal currencies such
+      as JPY are already whole units. Stated in every checkout/cart tool description.
+  storefront_json:
+    representation: decimal string
+    example: '"price": "78.00"'
+    warning: >-
+      The two surfaces disagree. An agent that reads a price from /products.json and passes it into
+      an MCP flow — or vice versa — will be wrong by a factor of 100.
+identifiers:
+  style: Shopify Global IDs (GIDs)
+  examples:
+    - 'gid://shopify/ProductVariant/…'
+    - 'gid://shopify/Cart/abc123?key=secret'
+    - 'gid://shopify/Checkout/abc123'
+  caution: >-
+    Cart GIDs carry a `key` query parameter that is part of the identifier and must not be stripped.
+localization:
+  hints: 'checkout.context: address_country, address_region, postal_code, language (BCP 47), currency, intent, eligibility[]'
+  rule: >-
+    Context values are provisional hints for pricing and availability; higher-resolution data (an
+    actual shipping address) supersedes them, and unsupported hints are ignored without error.
+  storefront: 'Localized storefronts published for de, fr and other locales (see sitemap.xml).'
+attribution:
+  supported: true
+  fields: [referring_domain, click_id_tag, click_id_value, activity_id_tag, activity_id_value, utm_campaign, utm_source, utm_medium, utm_content, utm_term]
+  note: Marketing attribution is a first-class, agent-settable block on create_checkout.
+tracing:
+  request_id_header: x-request-id
+  observed: true
+  note: Present on both MCP and storefront JSON responses. No trace-context / traceparent header observed.
+versioning:
+  style: date-based protocol version
+  current: '2026-04-08'
+  also_supported: ['2026-01-23']
+  discovery: https://finesse.us/.well-known/ucp
+  response_header: x-shopify-ucp-mcp-api-version
+  note: Versioning is negotiated at the protocol level, not via a URL path segment or Accept header.
+errors:
+  envelope: JSON-RPC 2.0 error object with a UCP `data` extension
+  shape: '{"jsonrpc":"2.0","id":N,"error":{"code":<int>,"message":<string>,"data":{"code":<slug>,"content":<human string>,"continue_url":<url>}}}'
+  rfc9457: false
+  catalog: errors/finesse-problem-types.yml
+rate_limiting:
+  published_numbers: false
+  signal_headers: [shopify-complexity-score, shopify-complexity-score-v2]
+  exhaustion_status: 429
+  retry_after_header: not observed
+  scope: per IP (stated in agents.md)
+  detail: rate-limits/finesse-rate-limits.yml
+human_in_the_loop:
+  rule: >-
+    Payment must not be completed without explicit, contemporaneous buyer approval. If an agent
+    cannot obtain approval at the moment of payment, the store's own instructions direct it to route
+    the purchase through Shop Pay via the Shop skill instead. This is the single strongest published
+    constraint on the surface and it is enforced by policy, not by a scope.
+  source: https://finesse.us/agents.md
+cors:
+  access_control_allow_origin: '*'
+  observed_on: https://finesse.us/api/ucp/mcp
+security_headers_observed:
+  - 'content-security-policy: block-all-mixed-content; frame-ancestors ''none''; upgrade-insecure-requests;'
+  - 'x-frame-options: DENY'
+  - 'x-content-type-options: nosniff'
+  - 'cache-control: no-cache, no-store'
+cross_links:
+  authentication: authentication/finesse-authentication.yml
+  errors: errors/finesse-problem-types.yml
+  lifecycle: lifecycle/finesse-lifecycle.yml
+  rate_limits: rate-limits/finesse-rate-limits.yml
+  data_model: data-model/finesse-data-model.yml

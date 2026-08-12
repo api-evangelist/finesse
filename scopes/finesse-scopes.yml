@@ -1,0 +1,40 @@
+generated: '2026-08-12'
+method: probed
+source: https://finesse.us/.well-known/openid-configuration
+docs: null
+note: >-
+  Scopes are read verbatim from the `scopes_supported` array of the OAuth 2.0 / OpenID Connect
+  metadata FINESSE serves at its own apex domain. FINESSE publishes no scope reference page of its
+  own, so the descriptions below state only what the scope name asserts plus what the metadata
+  itself proves; nothing is inferred beyond that. The authorization server is the Shopify-hosted
+  customer identity provider for this merchant (issuer
+  https://shopify.com/authentication/23733469261), with endpoints on account.finesse.us.
+authorization_server: https://account.finesse.us/authentication/oauth/authorize
+token_endpoint: https://account.finesse.us/authentication/oauth/token
+pkce: S256
+scope_count: 4
+scopes:
+  - name: openid
+    standard: true
+    spec: OpenID Connect Core 1.0
+    description: Request an ID token identifying the signed-in FINESSE shopper.
+  - name: email
+    standard: true
+    spec: OpenID Connect Core 1.0
+    description: Release the shopper's email address and email_verified claim.
+  - name: 'customer-account-api:full'
+    standard: false
+    description: >-
+      Full access to the customer account API on behalf of the signed-in shopper — the surface behind
+      account.finesse.us (orders, addresses, profile). Not documented on any FINESSE page.
+  - name: 'customer-account-mcp-api:full'
+    standard: false
+    description: >-
+      Full access to a customer-account MCP API on behalf of the signed-in shopper. This is a
+      logged-in agent surface distinct from the anonymous storefront MCP endpoint at
+      /api/ucp/mcp; FINESSE publishes no documentation for it, and its tool manifest was not
+      retrievable without a customer session.
+notes: >-
+  These are end-user consent scopes for shopper identity, not developer API scopes. The public
+  agent commerce endpoint (https://finesse.us/api/ucp/mcp) carries no OAuth scope requirement at
+  all — see authentication/finesse-authentication.yml.

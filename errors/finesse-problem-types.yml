@@ -1,0 +1,60 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  live POST to https://finesse.us/api/ucp/mcp (2026-08-12) plus tool descriptions in
+  mcp/finesse-mcp-tools-list.json and https://finesse.us/agents.md
+format: jsonrpc2
+rfc9457: false
+note: >-
+  FINESSE publishes no error reference page. There is no OpenAPI to derive 4xx/5xx responses from,
+  so this catalog records only error shapes actually observed on the wire or explicitly named in
+  the store's own agent instructions. It is deliberately short: an incomplete honest catalog, not a
+  guessed complete one.
+envelope:
+  transport: JSON-RPC 2.0
+  shape:
+    jsonrpc: '2.0'
+    id: <matches the request id>
+    error:
+      code: <integer — JSON-RPC or UCP-namespaced>
+      message: <human-readable summary>
+      data:
+        code: <machine-readable slug>
+        content: <human-readable detail>
+        continue_url: <optional URL to hand back to the buyer>
+  note: >-
+    Errors arrive with HTTP 200 and the failure carried in the JSON-RPC body — an agent that
+    branches on HTTP status alone will read a failed call as a success.
+problem_types:
+  - code: -32001
+    slug: invalid_profile_url
+    title: UCP discovery failed
+    observed: true
+    observed_message: 'UCP discovery failed'
+    observed_detail: 'Unable to fetch agent profile: Missing profile uri'
+    cause: >-
+      The request omitted meta.ucp-agent.profile, or the supplied profile URI could not be fetched.
+    remediation: >-
+      Supply meta.ucp-agent.profile on every tool call with a publicly resolvable agent profile URI.
+    carries_continue_url: true
+  - code: 429
+    slug: rate_limited
+    title: Too Many Requests
+    observed: false
+    source: https://finesse.us/agents.md ("The MCP endpoint is rate-limited per IP. Back off on 429 responses.")
+    cause: Per-IP request rate exceeded on the MCP endpoint.
+    remediation: >-
+      Back off and retry with exponential delay. Watch shopify-complexity-score /
+      shopify-complexity-score-v2 as a cost signal. No Retry-After header was observed.
+not_captured:
+  - >-
+    Checkout failure modes (declined payment, out-of-stock variant, undeliverable address,
+    invalid or expired discount code) are returned inside complete_checkout / update_checkout
+    results per the tool descriptions, but the store publishes no enumeration of them and none
+    could be observed without transacting. They are deliberately left out rather than guessed.
+  - >-
+    Storefront JSON endpoints (/products.json and friends) return conventional HTTP status codes
+    with an HTML body on error; no structured error document is served.
+gaps:
+  - No published error reference, no error code registry, no RFC 9457 problem+json.
+  - Failures are signalled in-body under HTTP 200, with no documented list of `data.code` slugs.

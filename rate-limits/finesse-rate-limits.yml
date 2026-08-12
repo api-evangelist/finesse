@@ -1,0 +1,49 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  https://finesse.us/agents.md and response headers observed on
+  https://finesse.us/api/ucp/mcp and https://finesse.us/products.json (2026-08-12)
+limit_count: 0
+note: >-
+  FINESSE states that its MCP endpoint is rate-limited per IP and that agents must back off on 429,
+  but publishes no number: no requests-per-second, no burst, no quota, no window. What IS emitted on
+  every response is a complexity score, which is a cost signal rather than a remaining-budget
+  signal — an agent can see what a call cost but not how much budget is left. Recorded as an honest
+  zero on published limits, with the real runtime headers captured.
+limits: []
+signals:
+  headers:
+    - name: shopify-complexity-score
+      observed: true
+      example_values:
+        - {endpoint: 'POST /api/ucp/mcp (tools/list)', value: 32}
+        - {endpoint: 'GET /products.json', value: 100}
+      meaning: >-
+        Cost of the request. Not a remaining-quota counter and not paired with a limit or reset
+        header.
+    - name: shopify-complexity-score-v2
+      observed: true
+      meaning: Second-generation complexity score; matched the v1 value on every observed response.
+  absent_headers:
+    - X-RateLimit-Limit
+    - X-RateLimit-Remaining
+    - X-RateLimit-Reset
+    - RateLimit
+    - RateLimit-Policy
+    - Retry-After
+  note: >-
+    None of the RFC 9239 / draft-ietf-httpapi-ratelimit-headers families were present on any
+    observed response, and no Retry-After was returned.
+exhaustion:
+  status: 429
+  source: https://finesse.us/agents.md
+  documented_behavior: 'Respect rate limits. The MCP endpoint is rate-limited per IP. Back off on 429 responses.'
+scope:
+  - {surface: 'https://finesse.us/api/ucp/mcp', scope: per-IP, window: not published, limit: not published, burst: not published}
+  - {surface: 'https://finesse.us/*.json storefront endpoints', scope: not published, window: not published, limit: not published, burst: not published}
+gaps:
+  - No numeric limit published for any surface.
+  - >-
+    Per-IP scoping (rather than per-credential) is a consequence of the endpoint having no
+    credential at all; shared-egress agents will contend with each other.
+  - No Retry-After and no reset timestamp, so backoff can only be blind exponential.

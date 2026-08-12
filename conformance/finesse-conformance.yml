@@ -1,0 +1,134 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  live probes of https://finesse.us (2026-08-12): /.well-known/ucp,
+  /.well-known/openid-configuration, /.well-known/oauth-authorization-server,
+  /.well-known/oauth-protected-resource, /api/ucp/mcp, /llms.txt, /agents.md, /sitemap.xml
+note: >-
+  Every `conforms: true` below rests on a document FINESSE serves from its own host, fetched on the
+  date above. No certification, audit or compliance program is claimed anywhere on FINESSE's
+  surface, so no Compliance pointer is emitted.
+standards:
+  - id: ucp
+    name: Universal Commerce Protocol
+    version: '2026-04-08'
+    conforms: true
+    evidence: >-
+      /.well-known/ucp returns a full merchant profile declaring services (dev.ucp.shopping over MCP
+      and embedded transports), seven shopping capabilities, and three payment handlers, with
+      supported_versions 2026-04-08 and 2026-01-23. HTTP 200.
+    spec: https://ucp.dev
+  - id: mcp
+    name: Model Context Protocol
+    conforms: true
+    evidence: >-
+      POST /api/ucp/mcp with method tools/list returned HTTP 200 and 13 tools, each with a
+      JSON Schema 2020-12 inputSchema. Response carried x-shopify-ucp-mcp-api-version: 2026-04-08.
+  - id: jsonrpc2
+    name: JSON-RPC 2.0
+    conforms: true
+    evidence: >-
+      Requests and responses carry jsonrpc "2.0" with matched ids; an unknown method returned a
+      well-formed error object (code -32001) rather than a bare HTTP failure.
+  - id: json-schema-2020-12
+    name: JSON Schema 2020-12
+    conforms: true
+    evidence: 'Every tool inputSchema declares $schema: https://json-schema.org/draft/2020-12/schema.'
+  - id: oidc
+    name: OpenID Connect Discovery 1.0
+    conforms: true
+    evidence: >-
+      /.well-known/openid-configuration returns HTTP 200 with issuer, authorization_endpoint,
+      token_endpoint, jwks_uri, response_types_supported, subject_types_supported and
+      id_token_signing_alg_values_supported (RS256).
+  - id: oauth2
+    name: OAuth 2.0
+    conforms: true
+    evidence: >-
+      authorization_code and refresh_token grants, client_secret_basic token auth, and the
+      urn:ietf:params:oauth:grant-type:jwt-bearer extension grant, all declared in the served
+      metadata.
+  - id: rfc8414
+    name: 'RFC 8414 — OAuth 2.0 Authorization Server Metadata'
+    conforms: true
+    evidence: /.well-known/oauth-authorization-server returns HTTP 200 with a complete metadata document.
+  - id: rfc9728
+    name: 'RFC 9728 — OAuth 2.0 Protected Resource Metadata'
+    conforms: true
+    evidence: >-
+      /.well-known/oauth-protected-resource returns resource https://finesse.us,
+      authorization_servers [account.finesse.us, shopify.com/authentication/23733469261] and
+      bearer_methods_supported [header].
+  - id: rfc7636
+    name: 'RFC 7636 — PKCE'
+    conforms: true
+    evidence: 'code_challenge_methods_supported: ["S256"] in the served OAuth metadata.'
+  - id: llmstxt
+    name: llms.txt
+    conforms: true
+    evidence: 'GET /llms.txt returned HTTP 200, text/markdown, 4,329 bytes of real agent instructions.'
+  - id: agents-md
+    name: AGENTS.md / agents.md agent instructions
+    conforms: true
+    evidence: >-
+      GET /agents.md returned HTTP 200 text/markdown, and it is advertised through a dedicated
+      /sitemap_agentic_discovery.xml whose only entry is that document.
+  - id: sitemaps
+    name: sitemaps.org 0.9
+    conforms: true
+    evidence: /sitemap.xml returns a valid sitemapindex covering products, pages, collections, blogs and locales.
+  - id: iso4217
+    name: 'ISO 4217 currency codes (minor units)'
+    conforms: true
+    evidence: >-
+      Every checkout/cart tool description specifies integer minor units paired with an ISO 4217
+      currency code.
+  - id: iso3166-1-alpha2
+    name: 'ISO 3166-1 alpha-2 country codes'
+    conforms: true
+    evidence: 'address_country fields in the checkout inputSchema require 2-letter ISO 3166-1 alpha-2 values.'
+  - id: bcp47
+    name: 'BCP 47 language tags'
+    conforms: true
+    evidence: 'checkout.context.language is specified as an IETF BCP 47 tag.'
+  - id: openapi
+    name: OpenAPI
+    conforms: false
+    evidence: >-
+      No OpenAPI or Swagger document on any FINESSE host. /openapi.json returned HTTP 404 on
+      finesse.us; api.finesse.us, docs.finesse.us and developers.finesse.us do not resolve. The
+      protocol-level OpenRPC schema referenced by the merchant profile
+      (https://ucp.dev/2026-04-08/services/shopping/mcp.openrpc.json) is published by UCP, not by
+      FINESSE, and is not claimed as a FINESSE artifact.
+  - id: rfc9457
+    name: 'RFC 9457 — Problem Details for HTTP APIs'
+    conforms: false
+    evidence: Errors use the JSON-RPC 2.0 error object with a UCP data extension, not application/problem+json.
+  - id: rfc9116
+    name: 'RFC 9116 — security.txt'
+    conforms: false
+    evidence: /.well-known/security.txt returned HTTP 404 on finesse.us.
+  - id: rfc8594
+    name: 'RFC 8594 — Sunset header'
+    conforms: false
+    evidence: No Sunset or Deprecation header observed and no deprecation policy published.
+  - id: a2a
+    name: 'A2A Agent Card'
+    conforms: false
+    evidence: >-
+      /.well-known/agent-card.json and /.well-known/agent.json both returned HTTP 404 (HTML 404
+      page, 4,264 bytes) on finesse.us.
+  - id: asyncapi
+    name: AsyncAPI
+    conforms: false
+    evidence: >-
+      No event, streaming or webhook surface is published for third parties. Not applicable to a
+      retail storefront.
+  - id: ratelimit-headers
+    name: 'IETF RateLimit header fields'
+    conforms: false
+    evidence: >-
+      No RateLimit / X-RateLimit / Retry-After headers observed; only shopify-complexity-score
+      cost signals.
+certifications_published: []
+compliance_programs_published: []

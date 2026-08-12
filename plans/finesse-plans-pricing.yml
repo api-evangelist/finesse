@@ -1,0 +1,33 @@
+generated: '2026-08-12'
+method: searched
+source: https://finesse.us/agents.md
+plan_count: 0
+note: >-
+  FINESSE is a direct-to-consumer apparel brand, not an API vendor. It sells clothing to shoppers
+  and exposes a commerce endpoint so agents can buy that clothing on a buyer's behalf. There is no
+  developer plan, no API tier, no metered pricing page and no paid access of any kind — access to
+  the UCP/MCP endpoint and the storefront JSON endpoints is free and anonymous. This is a genuine
+  zero, not a missing page: the product being priced is merchandise, and merchandise prices are
+  returned per-item by the catalog tools.
+plans: []
+commercial_model:
+  type: retail-ecommerce
+  what_is_sold: Women's apparel, footwear and accessories (sizes XS-3X).
+  api_monetization: none
+  api_access_cost: free
+  merchandise_pricing:
+    surface: 'search_catalog / get_product (MCP) and /products.json (storefront)'
+    representation: >-
+      MCP returns integer ISO 4217 minor units with a currency code; the storefront JSON endpoints
+      return decimal strings. See conventions/finesse-conventions.yml.
+  discounts:
+    supported: true
+    mechanism: 'checkout.discounts.codes[] on create_checkout / update_checkout (case-insensitive; replaces prior set)'
+    capability: dev.ucp.shopping.discount (declared in /.well-known/ucp)
+  payment_handlers:
+    - {id: shop_pay, namespace: dev.shopify.shop_pay}
+    - {id: gpay, namespace: com.google.pay}
+    - {id: shopify.card, namespace: dev.shopify.card, brands: [visa, master, american_express, discover, diners_club]}
+evidence:
+  - {url: 'https://finesse.us/agents.md', status: 200}
+  - {url: 'https://finesse.us/.well-known/ucp', status: 200}

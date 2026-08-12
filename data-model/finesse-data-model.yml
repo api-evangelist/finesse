@@ -1,0 +1,215 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  mcp/finesse-mcp-tools-list.json (live tools/list inputSchemas, 2026-08-12) and an observed
+  response from https://finesse.us/products.json (HTTP 200, 2026-08-12)
+note: >-
+  There is no OpenAPI to derive from, so this entity graph is built from two things that were
+  actually on the wire: the JSON Schema 2020-12 inputSchemas the MCP endpoint published for its 13
+  tools, and the shape of a real /products.json response. Fields appear here only if they appeared
+  in one of those. Response schemas are NOT published by the MCP endpoint — only inputs are — so
+  entities reached only through responses (Order, LineItem totals) are recorded with the fields the
+  input schemas reference and are marked accordingly.
+identifier_convention:
+  style: Shopify Global ID (GID) URIs
+  examples:
+    product_variant: 'gid://shopify/ProductVariant/…'
+    cart: 'gid://shopify/Cart/abc123?key=secret'
+    checkout: 'gid://shopify/Checkout/abc123'
+  caution: The cart GID includes a `key` query parameter that is part of the identifier.
+entities:
+  - name: Product
+    source: 'storefront /products.json; MCP get_product / lookup_catalog / search_catalog'
+    fields:
+      - {name: id, type: integer, note: 'numeric on the storefront feed; GID string on the MCP surface'}
+      - {name: title, type: string}
+      - {name: handle, type: string, note: URL slug}
+      - {name: body_html, type: string}
+      - {name: vendor, type: string}
+      - {name: product_type, type: string}
+      - {name: tags, type: array<string>}
+      - {name: published_at, type: datetime}
+      - {name: created_at, type: datetime}
+      - {name: updated_at, type: datetime}
+    lookup_limits: 'lookup_catalog accepts 1-10 ids per call'
+  - name: ProductVariant
+    source: 'storefront /products.json variants[]; referenced by cart/checkout line_items[].item.id'
+    fields:
+      - {name: id, type: integer|gid}
+      - {name: title, type: string}
+      - {name: option1, type: string}
+      - {name: option2, type: string}
+      - {name: option3, type: string}
+      - {name: sku, type: string}
+      - {name: price, type: string, note: 'decimal string on the storefront feed'}
+      - {name: compare_at_price, type: string}
+      - {name: available, type: boolean}
+      - {name: grams, type: integer}
+      - {name: requires_shipping, type: boolean}
+      - {name: taxable, type: boolean}
+      - {name: position, type: integer}
+      - {name: featured_image, type: object}
+      - {name: product_id, type: integer}
+  - name: ProductImage
+    source: storefront /products.json images[]
+    fields:
+      - {name: id, type: integer}
+      - {name: src, type: url}
+      - {name: width, type: integer}
+      - {name: height, type: integer}
+      - {name: position, type: integer}
+      - {name: product_id, type: integer}
+      - {name: variant_ids, type: array<integer>}
+  - name: ProductOption
+    source: storefront /products.json options[]
+    fields:
+      - {name: name, type: string, note: 'e.g. Size, Color'}
+      - {name: position, type: integer}
+      - {name: values, type: array<string>, note: 'size runs XS-3X appear here'}
+  - name: Cart
+    source: MCP create_cart / get_cart / update_cart / cancel_cart
+    fields:
+      - {name: id, type: gid}
+      - {name: line_items, type: array<LineItem>}
+      - {name: buyer, type: Buyer}
+      - {name: context, type: BuyerContext}
+  - name: Checkout
+    source: MCP create_checkout / get_checkout / update_checkout / complete_checkout / cancel_checkout
+    fields:
+      - {name: id, type: gid}
+      - {name: cart_id, type: gid, note: 'when converting a cart; cart contents win over overlapping fields'}
+      - {name: line_items, type: array<LineItem>}
+      - {name: buyer, type: Buyer}
+      - {name: context, type: BuyerContext}
+      - {name: payment, type: Payment}
+      - {name: fulfillment, type: Fulfillment}
+      - {name: discounts, type: Discounts}
+      - {name: attribution, type: Attribution}
+  - name: LineItem
+    source: MCP cart/checkout line_items[]
+    fields:
+      - {name: id, type: string, note: 'line item id, used when updating'}
+      - {name: quantity, type: integer}
+      - {name: item.id, type: gid, note: 'the ProductVariant id being purchased'}
+    required: [item, quantity]
+  - name: Buyer
+    source: MCP checkout.buyer
+    fields:
+      - {name: email, type: string, format: email}
+      - {name: phone_number, type: string}
+  - name: BuyerContext
+    source: 'MCP checkout.context and catalog.context'
+    fields:
+      - {name: address_country, type: string, format: 'ISO 3166-1 alpha-2'}
+      - {name: address_region, type: string}
+      - {name: postal_code, type: string}
+      - {name: language, type: string, format: 'BCP 47'}
+      - {name: currency, type: string, format: 'ISO 4217'}
+      - {name: intent, type: string}
+      - {name: eligibility, type: 'array<string>', note: 'reverse-domain benefit claims, e.g. com.example.loyalty'}
+    note: Provisional hints; superseded by authoritative data such as a shipping address.
+  - name: BuyerSignals
+    source: MCP catalog.signals
+    fields:
+      - {name: 'dev.ucp.buyer_ip', type: string}
+      - {name: 'dev.ucp.user_agent', type: string}
+    note: >-
+      Platform environment data an agent forwards about the human it acts for. Worth flagging: this
+      is buyer PII travelling through an anonymous endpoint.
+  - name: CatalogFilters
+    source: MCP search_catalog / lookup_catalog / get_product catalog.filters
+    fields:
+      - {name: categories, type: 'array<string>', note: OR-combined}
+      - {name: 'price.min', type: integer, note: minor currency units}
+      - {name: 'price.max', type: integer, note: minor currency units}
+      - {name: available, type: boolean, default: true}
+  - name: Fulfillment
+    source: MCP checkout.fulfillment
+    fields:
+      - {name: 'methods[].type', type: string, required: true}
+      - {name: 'methods[].line_item_ids', type: 'array<string>'}
+      - {name: 'methods[].selected_destination_id', type: string}
+      - {name: 'methods[].destinations[]', type: Destination}
+      - {name: 'methods[].groups[].id', type: string}
+      - {name: 'methods[].groups[].selected_option_id', type: string}
+    constraints:
+      allows_multi_destination_shipping: false
+      allows_method_combinations: [[shipping]]
+      source: https://finesse.us/.well-known/ucp
+  - name: Destination
+    source: MCP checkout.fulfillment.methods[].destinations[]
+    fields:
+      - {name: id, type: string}
+      - {name: first_name, type: string}
+      - {name: last_name, type: string}
+      - {name: phone_number, type: string}
+      - {name: street_address, type: string}
+      - {name: extended_address, type: string}
+      - {name: address_locality, type: string}
+      - {name: address_region, type: string}
+      - {name: postal_code, type: string}
+      - {name: address_country, type: string, format: 'ISO 3166-1 alpha-2'}
+  - name: Payment
+    source: MCP checkout.payment
+    fields:
+      - {name: 'instruments[].id', type: string, required: true}
+      - {name: 'instruments[].handler_id', type: string, required: true, note: 'gpay | shopify.card | shop_pay'}
+      - {name: 'instruments[].type', type: string, required: true, note: "'card' or 'token' for wallet payments"}
+      - {name: 'instruments[].credential.token', type: string, note: opaque}
+      - {name: 'instruments[].credential.type', type: string, note: 'namespaced, e.g. google.pay'}
+      - {name: 'instruments[].billing_address', type: Destination}
+      - {name: 'instruments[].display.brand', type: string}
+      - {name: 'instruments[].display.last_digits', type: string}
+      - {name: 'instruments[].display.expiry_month', type: integer}
+      - {name: 'instruments[].display.expiry_year', type: integer}
+      - {name: 'instruments[].selected', type: boolean}
+  - name: Discounts
+    source: MCP checkout.discounts
+    fields:
+      - {name: codes, type: 'array<string>', note: 'case-insensitive; replaces the prior set; empty array clears'}
+  - name: Attribution
+    source: MCP checkout.attribution
+    fields:
+      - {name: referring_domain, type: string}
+      - {name: click_id_tag, type: string}
+      - {name: click_id_value, type: string}
+      - {name: activity_id_tag, type: string}
+      - {name: activity_id_value, type: string}
+      - {name: utm_campaign, type: string}
+      - {name: utm_source, type: string}
+      - {name: utm_medium, type: string}
+      - {name: utm_content, type: string}
+      - {name: utm_term, type: string}
+  - name: Order
+    source: MCP get_order / complete_checkout result
+    fields:
+      - {name: id, type: gid}
+    incomplete: true
+    note: >-
+      Only the identifier is provable from the published input schemas; the MCP endpoint publishes
+      no output schemas, and the order body was not observed because that would require transacting.
+  - name: Money
+    source: every checkout/cart tool description
+    fields:
+      - {name: amount, type: integer, note: ISO 4217 minor units}
+      - {name: currency, type: string, format: 'ISO 4217'}
+relationships:
+  - {from: Product, to: ProductVariant, type: has_many, via: variants}
+  - {from: Product, to: ProductImage, type: has_many, via: images}
+  - {from: Product, to: ProductOption, type: has_many, via: options}
+  - {from: ProductVariant, to: Product, type: belongs_to, via: product_id}
+  - {from: ProductImage, to: ProductVariant, type: has_many, via: variant_ids}
+  - {from: Cart, to: LineItem, type: has_many, via: line_items}
+  - {from: LineItem, to: ProductVariant, type: belongs_to, via: item.id}
+  - {from: Checkout, to: Cart, type: belongs_to, via: cart_id}
+  - {from: Checkout, to: LineItem, type: has_many, via: line_items}
+  - {from: Checkout, to: Buyer, type: has_one, via: buyer}
+  - {from: Checkout, to: BuyerContext, type: has_one, via: context}
+  - {from: Checkout, to: Payment, type: has_one, via: payment}
+  - {from: Checkout, to: Fulfillment, type: has_one, via: fulfillment}
+  - {from: Checkout, to: Discounts, type: has_one, via: discounts}
+  - {from: Checkout, to: Attribution, type: has_one, via: attribution}
+  - {from: Fulfillment, to: Destination, type: has_many, via: 'methods[].destinations'}
+  - {from: Payment, to: Destination, type: has_one, via: 'instruments[].billing_address'}
+  - {from: Order, to: Checkout, type: belongs_to, via: complete_checkout}
+  - {from: CatalogFilters, to: Product, type: has_many, via: search_catalog}

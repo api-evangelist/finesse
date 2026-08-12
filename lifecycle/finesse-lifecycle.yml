@@ -1,0 +1,57 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  https://finesse.us/.well-known/ucp, https://finesse.us/agents.md, response headers on
+  https://finesse.us/api/ucp/mcp (2026-08-12)
+versioning:
+  style: date-based protocol version negotiated at discovery
+  current: '2026-04-08'
+  label: latest stable
+  supported_versions:
+    - version: '2026-04-08'
+      profile: https://finesse-us.myshopify.com/.well-known/ucp/2026-04-08
+      status: current
+    - version: '2026-01-23'
+      profile: https://finesse-us.myshopify.com/.well-known/ucp/2026-01-23
+      status: supported
+  response_header: x-shopify-ucp-mcp-api-version
+  observed_value: '2026-04-08'
+  note: >-
+    Versions are protocol versions of the Universal Commerce Protocol, governed by ucp.dev and
+    implemented by Shopify — not FINESSE-authored API versions. FINESSE's contribution is which
+    versions its store advertises.
+deprecation:
+  policy_published: false
+  sunset_header: not observed
+  deprecation_header: not observed
+  rfc8594: false
+  note: >-
+    No deprecation policy, no sunset schedule and no statement of how long 2026-01-23 will remain
+    served. An agent pinned to the older version has no published notice period. No Deprecation
+    pointer is emitted.
+status_page:
+  published: false
+  note: >-
+    FINESSE operates no status page of its own. The underlying platform's status page
+    (shopifystatus.com) belongs to Shopify, not FINESSE, and is deliberately not claimed here — a
+    StatusPage pointer would credit FINESSE with an operational surface it does not run. No
+    StatusPage pointer is emitted.
+sla:
+  published: false
+support:
+  channel: https://finesse.us/pages/contact
+  faq: https://finesse.us/pages/faq
+  order_tracking: https://finesse.us/pages/tracking-order
+  note: Consumer support only; there is no developer support channel.
+changelog:
+  published: false
+  note: >-
+    No dated changelog for the agent surface. The store publishes editorial blogs
+    (/blogs/news, /blogs/finesse-tv) but they are marketing content, not release notes.
+deprecated_operations: []
+stability:
+  mcp_endpoint: >-
+    Documented by the provider and versioned via UCP, so it carries an explicit contract.
+  storefront_json: >-
+    Documented for agents in agents.md but unversioned and carrying no stability guarantee; treat
+    /products.json and friends as best-effort.
