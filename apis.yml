@@ -11,6 +11,17 @@ description: >-
   catalog, cart, checkout and order tools with full JSON Schema inputs, an /agents.md instruction
   document advertised through a dedicated agentic-discovery sitemap, a mirroring /llms.txt, and
   OAuth 2.0 / OpenID Connect metadata for shopper accounts on account.finesse.us.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://finesse.us/cdn/shop/files/opt-1.jpg?v=1745528244
 url: https://raw.githubusercontent.com/api-evangelist/finesse/refs/heads/main/apis.yml
 x-type: company
