@@ -24,6 +24,9 @@ deliveryModel:
   method: derived
 image: https://finesse.us/cdn/shop/files/opt-1.jpg?v=1745528244
 url: https://raw.githubusercontent.com/api-evangelist/finesse/refs/heads/main/apis.yml
+x-api-posture: no-product-api
+x-api-posture-basis: observed
+x-api-posture-note: "FINESSE publishes no developer API program, but its storefront at finesse.us ships a genuine agent surface: a live Universal Commerce Protocol merchant profile at /.well-known/ucp, an unauthenticated "
 x-type: company
 x-source: harvest:secondary-market
 x-tier: profiled
