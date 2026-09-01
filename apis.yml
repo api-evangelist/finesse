@@ -38,15 +38,15 @@ tags:
 - Company
 - Retail
 - E-Commerce
-- fashion
-- apparel
-- direct-to-consumer
-- agentic-commerce
+- Fashion
+- Apparel
+- Direct to Consumer
+- Agentic Commerce
 - UCP
 - MCP
 - agent-native
-- shopify
-- consumer
+- Shopify
+- Consumer
 tags_raw:
 - Company
 - retail
@@ -72,12 +72,12 @@ apis:
   humanURL: https://finesse.us/agents.md
   baseURL: https://finesse.us/api/ucp/mcp
   tags:
-  - agentic-commerce
+  - Agentic Commerce
   - UCP
   - MCP
   - E-Commerce
   - Retail
-  - fashion
+  - Fashion
   - agent-native
   tags_raw:
   - agentic-commerce
@@ -118,7 +118,7 @@ apis:
   tags:
   - E-Commerce
   - Retail
-  - fashion
+  - Fashion
   - Catalog
   - agent-native
   tags_raw:
