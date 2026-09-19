@@ -57,7 +57,7 @@ tags:
 - Apparel
 - Direct to Consumer
 - Agentic Commerce
-- UCP
+- Universal Commerce Protocol
 - MCP
 - agent-native
 - Shopify
@@ -88,7 +88,7 @@ apis:
   baseURL: https://finesse.us/api/ucp/mcp
   tags:
   - Agentic Commerce
-  - UCP
+  - Universal Commerce Protocol
   - MCP
   - E-Commerce
   - Retail
