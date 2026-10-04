@@ -59,7 +59,7 @@ tags:
 - Agentic Commerce
 - Universal Commerce Protocol
 - MCP
-- agent-native
+- Agent-Native
 - Shopify
 - Consumer
 tags_raw:
@@ -93,7 +93,7 @@ apis:
   - E-Commerce
   - Retail
   - Fashion
-  - agent-native
+  - Agent-Native
   tags_raw:
   - agentic-commerce
   - ucp
@@ -119,6 +119,9 @@ apis:
     url: data-model/finesse-data-model.yml
   - type: RateLimits
     url: rate-limits/finesse-rate-limits.yml
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: ucp
 - name: FINESSE Storefront JSON (read-only)
   description: >-
     Unauthenticated read-only product endpoints that FINESSE documents for agents in its own
@@ -129,13 +132,12 @@ apis:
     https://finesse.us/products.json and https://finesse.us/collections/{handle}/products.json, both
     verified HTTP 200 on 2026-08-12.
   humanURL: https://finesse.us/agents.md
-  baseURL: https://finesse.us/
   tags:
   - E-Commerce
   - Retail
   - Fashion
   - Catalog
-  - agent-native
+  - Agent-Native
   tags_raw:
   - ecommerce
   - retail
@@ -147,6 +149,9 @@ apis:
     url: https://finesse.us/agents.md
   - type: DataModel
     url: data-model/finesse-data-model.yml
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: storefront-json
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
