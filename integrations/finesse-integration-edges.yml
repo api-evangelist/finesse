@@ -1,0 +1,16 @@
+generated: '2026-10-12'
+method: none
+source:
+- https://zapier.com/apps/finesse/integrations
+- https://n8n.io/integrations/finesse/
+- https://composio.dev/toolkits/finesse
+- https://monid.ai/tools/finesse
+checked:
+- https://composio.dev/toolkits/finesse
+- https://monid.ai/tools/finesse
+- https://n8n.io/integrations/finesse/
+- https://zapier.com/apps/finesse/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
