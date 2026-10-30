@@ -64,5 +64,117 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-FINESSE is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://forgeglobal.com/finesse_stock/
+FINESSE is a Los Angeles direct-to-consumer womenswear brand, founded in 2018, that positions itself as an AI-driven fashion house: proprietary demand-prediction models combined with weekly community votes decide which styles get produced and in what quantity, which the company frames as an answer to overproduction and fashion waste. It sells dresses, tops, bottoms, jumpsuits, outerwear, footwear and accessories in sizes XS-3X. FINESSE publishes no developer API program, but its storefront at finesse.us ships a genuine agent surface: a live Universal Commerce Protocol merchant profile at /.well-known/ucp, an unauthenticated MCP endpoint at /api/ucp/mcp exposing 13 catalog, cart, checkout and order tools with full JSON Schema inputs, an /agents.md instruction document advertised through a dedicated agentic-discovery sitemap, a mirroring /llms.txt, and OAuth 2.0 / OpenID Connect metadata for shopper accounts on account.finesse.us.
+
+**Areas:** Company · Retail · E-Commerce · Fashion · Apparel · Direct to Consumer · Agentic Commerce · Universal Commerce Protocol · MCP · Agent-Native · Shopify · Consumer
+
+## FINESSE on APIs.io
+
+Everything profiled for FINESSE is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/finesse/](https://apis.io/providers/finesse/)** — or go straight to one of the APIs or properties below.
+
+### APIs (2)
+
+- [FINESSE UCP Commerce MCP API](https://apis.io/apis/finesse/finesse-ucp-commerce-mcp-api/) — Agent-facing commerce endpoint implementing the Universal Commerce Protocol (version 2026-04-08, with 2026-01-23 also supported) over MCP/JSON-RPC 2.0.…
+- [FINESSE Storefront JSON (read-only)](https://apis.io/apis/finesse/finesse-storefront-json-read-only/) — Unauthenticated read-only product endpoints that FINESSE documents for agents in its own agents.md: a paged product feed at /products.json, per-product and…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [FINESSE UCP Commerce MCP](https://apis.io/servers/finesse/finesse-ucp-commerce-mcp/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Finesse Authentication](https://apis.io/security/finesse/finesse-authentication/)
+- [Finesse Domain Security](https://apis.io/security/finesse/finesse-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Finesse Scopes](https://apis.io/scopes/finesse/finesse-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Finesse Plans Pricing](https://apis.io/plans/finesse/finesse-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Finesse Rate Limits](https://apis.io/rate-limits/finesse/finesse-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://finesse.us/)
+- [Documentation](https://finesse.us/agents.md)
+- [Getting started](https://finesse.us/agents.md)
+- [API reference](https://finesse.us/agents.md)
+- [Sign up](https://finesse.us/account/register)
+- [Support](https://finesse.us/pages/contact)
+- [Blog](https://finesse.us/blogs/news)
+- [Terms of service](https://finesse.us/policies/terms-of-service)
+- [Privacy policy](https://finesse.us/policies/privacy-policy)
+
+## API Evangelist rating
+
+**Kin Score 29.5** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.7 |
+| Contract quality | 0.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 54.8 |
+| Access clarity | 34.2 |
+
+**Agent readiness 26.4** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | platform (partial credit) |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | yes |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | — |
+| Agentic Commerce | platform (partial credit) |
+
+**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/finesse/](https://apis.io/providers/finesse/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for FINESSE: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/finesse/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
